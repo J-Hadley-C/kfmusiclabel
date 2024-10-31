@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Beatmaker{% endblock %}
+
+{% block body %}
+<div class="beatmaker-dashboard">
+    {% if isAdmin %}
+        <h1>Bienvenue sur le Dashboard Administrateur des Beatmakers</h1>
+        <p>En tant qu'administrateur, vous pouvez voir toutes les musiques produites.</p>
+    {% else %}
+        <h1>Bienvenue sur votre Dashboard, Beatmaker</h1>
+        <p>Vous pouvez voir ici toutes vos musiques produites.</p>
+    {% endif %}
+
+    <h2>Liste des Musiques Produites</h2>
+    <ul>
+        {% for music in producedMusics %}
+            <li>
+                <strong>{{ music.title }}</strong> - {{ music.createdAt|date('d/m/Y') }}
+                <br>
+                <img src="{{ asset('uploads/' ~ music.cover) }}" alt="Cover" width="100">
+                <br>
+                <a href="{{ music.link }}">Écouter</a>
+            </li>
+        {% else %}
+            <li>Aucune musique produite trouvée.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Collaborations</h2>
+    <p><a href="{{ path('collaborations_list') }}">Voir toutes les collaborations</a></p>
+    <p><a href="{{ path('collaborations_new') }}">Créer une nouvelle collaboration</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<div class="form-container">
+    <h1>Connexion</h1>
+    <form method="post" action="{{ path('app_login') }}">
+        {% if error %}
+            <div class="alert alert-danger">
+                {% if error.messageKey == 'Invalid credentials.' %}
+                    Votre mot de passe ou email est incorrect.
+                {% else %}
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <input type="text" name="email" id="inputEmail" class="form-control" placeholder="Votre email" required autofocus value="{{ last_username }}">
+        </div>
+
+        <div class="form-group">
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
+        </div>
+
+        <button class="btn" type="submit">Se connecter</button>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <p>Vous n'avez pas de compte ? <a href="{{ path('app_register') }}">S'inscrire</a></p>
+        <p>Mot de passe oublié ? <a href="{{ path('app_forgot_password_request') }}">Réinitialiser le mot de passe</a></p>
+    </form>
+</div>
+{% endblock %}

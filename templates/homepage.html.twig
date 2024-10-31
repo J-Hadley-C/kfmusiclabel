@@ -1,0 +1,36 @@
+{# templates/homepage.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue sur Label Music{% endblock %}
+
+{% block body %}
+    <section class="hero">
+        <h1>Label Music</h1>
+        <p>Découvrez les talents et la créativité de nos artistes.</p>
+        <a href="{{ path('app_register') }}" class="cta-button">Rejoignez-nous</a>
+    </section>
+
+    <section class="about">
+        <h2>À propos de nous</h2>
+        <p>Label Music est dédié à la promotion de nouveaux talents et à la collaboration entre artistes, beatmakers, et producteurs.</p>
+    </section>
+
+    <section class="music-showcase">
+        <h2>Nos musiques les plus populaires</h2>
+        <div class="music-grid">
+            {# Affichage des musiques populaires (exemple) #}
+            <div class="music-item">
+                <img src="/path/to/image.jpg" alt="Cover">
+                <h3>Titre de la musique</h3>
+                <p>Artiste : Nom de l'artiste</p>
+            </div>
+            <!-- Ajouter d'autres musiques ici -->
+        </div>
+    </section>
+
+    <section class="call-to-action">
+        <h2>Rejoignez notre communauté</h2>
+        <p>Créez votre profil et faites-vous découvrir.</p>
+        <a href="{{ path('app_register') }}" class="cta-button">Créer un compte</a>
+    </section>
+{% endblock %}

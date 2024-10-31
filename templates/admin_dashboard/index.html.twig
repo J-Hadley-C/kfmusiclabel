@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord Admin{% endblock %}
+
+{% block body %}
+<h1>Tableau de Bord Administrateur</h1>
+
+<section>
+    <h2>Profils des Utilisateurs</h2>
+
+    <h3>Artistes</h3>
+    <ul>
+        {% for artist in artists %}
+            <li>{{ artist.nickname }} - {{ artist.email }}</li>
+        {% else %}
+            <li>Aucun artiste trouvé.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Producteurs</h3>
+    <ul>
+        {% for producer in producers %}
+            <li>{{ producer.nickname }} - {{ producer.email }}</li>
+        {% else %}
+            <li>Aucun producteur trouvé.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Beatmakers</h3>
+    <ul>
+        {% for beatmaker in beatmakers %}
+            <li>{{ beatmaker.nickname }} - {{ beatmaker.email }}</li>
+        {% else %}
+            <li>Aucun beatmaker trouvé.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Musiciens</h3>
+    <ul>
+        {% for musician in musicians %}
+            <li>{{ musician.nickname }} - {{ musician.email }}</li>
+        {% else %}
+            <li>Aucun musicien trouvé.</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section>
+    <h2>Collaborations</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Statut</th>
+                <th>Participants</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for collaboration in collaborations %}
+                <tr>
+                    <td>{{ collaboration.title }}</td>
+                    <td>{{ collaboration.status }}</td>
+                    <td>
+                        {% for participant in collaboration.participation %}
+                            {{ participant.nickname }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Aucune collaboration trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

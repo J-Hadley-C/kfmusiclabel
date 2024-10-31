@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Découvrir{% endblock %}
+
+{% block body %}
+    <h1>Découvrir les Œuvres et Collaborations</h1>
+
+    <section>
+        <h2>Musiques</h2>
+        <ul>
+            {% for music in musics %}
+                <li>
+                    <strong>{{ music.title }}</strong> par {{ music.artist.nickname ?? 'Artiste inconnu' }}
+                    <br>
+                    <img src="{{ asset('uploads/' ~ music.cover) }}" alt="Cover" width="100">
+                    <br>
+                    <a href="{{ music.link }}">Écouter</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section>
+        <h2>Collaborations</h2>
+        <ul>
+            {% for collaboration in collaborations %}
+                <li>
+                    <strong>{{ collaboration.title }}</strong> - Statut: {{ collaboration.status }}
+                    <br>
+                    Initiée par {{ collaboration.initiatedAt.nickname ?? 'Utilisateur inconnu' }}
+                    <br>
+                    <a href="{{ path('collaboration_detail', { 'id': collaboration.id }) }}">Voir détails</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

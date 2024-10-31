@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Collaborations{% endblock %}
+
+{% block body %}
+<h1>Liste des Collaborations</h1>
+
+{% if collaborations is not empty %}
+    <ul>
+        {% for collaboration in collaborations %}
+            <li>
+                <strong>{{ collaboration.title }}</strong> - Statut : {{ collaboration.status }}
+                <p>Description : {{ collaboration.description }}</p>
+                <p>Initiée par : {{ collaboration.initiatedAt.nickname }}</p>
+                <p>Date de création : {{ collaboration.createdAt|date('d/m/Y') }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune collaboration trouvée.</p>
+{% endif %}
+
+{% endblock %}

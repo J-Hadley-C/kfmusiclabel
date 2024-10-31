@@ -1,0 +1,67 @@
+/* Style pour la barre de navigation */
+header {
+    background-color: #222; /* Couleur de fond sombre pour un look moderne */
+    color: #fff;
+    padding: 1rem 0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Ajout d'une ombre pour la profondeur */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin: 0 1rem;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    transition: background 0.3s, color 0.3s;
+    border-radius: 5px; /* Coins arrondis pour les liens */
+}
+
+/* Couleur de survol */
+nav ul li a:hover {
+    background-color: #555; /* Fond de survol */
+    color: #ddd;
+}
+
+/* Style pour l'élément actif */
+nav ul li a.active {
+    background-color: #444; /* Fond légèrement différent pour l'actif */
+    color: #ddd;
+    font-weight: bold;
+    box-shadow: inset 0px 0px 5px rgba(255, 255, 255, 0.3); /* Légère ombre intérieure pour l'effet */
+}
+
+/* Style général de la page */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+main {
+    padding: 2rem;
+}
+
+footer {
+    background-color: #222;
+    color: #ccc;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+}
