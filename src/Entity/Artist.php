@@ -2,50 +2,140 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\ArtistRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Entity\User;
-use App\Entity\Music;
-use App\Entity\Follow;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: ArtistRepository::class)]
+#[ORM\Entity]
+#[ORM\Table(name: "artists")]
+#[ORM\InheritanceType("SINGLE_TABLE")]
+#[ORM\DiscriminatorColumn(name: "type", type: "string")]
+#[ORM\DiscriminatorMap([
+    "artist" => Artist::class,
+    "beatmaker" => Beatmaker::class,
+    "musicien" => Musicien::class,
+    "producteur" => Producteur::class,
+    "chanteur" => Chanteur::class
+])]
 class Artist
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    #[ORM\OneToOne(mappedBy: 'artist', targetEntity: User::class)]
-    private ?User $user = null;
+    #[ORM\Column(type: "string", length: 100)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
+    private ?string $name = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $bio = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $age = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $city = null;
 
-    #[ORM\OneToMany(targetEntity: Music::class, mappedBy: 'artist')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'artists')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
+
+    #[ORM\OneToMany(mappedBy: 'artist', targetEntity: Music::class, cascade: ['persist', 'remove'])]
     private Collection $musics;
 
-    #[ORM\OneToMany(targetEntity: Follow::class, mappedBy: 'artist')]
-    private Collection $followers;
+    #[ORM\ManyToMany(targetEntity: Collaboration::class, mappedBy: 'participants')]
+    private Collection $collaborations;
 
     public function __construct()
     {
         $this->musics = new ArrayCollection();
-        $this->followers = new ArrayCollection();
+        $this->collaborations = new ArrayCollection();
     }
+
+    // Méthode pour obtenir le type d'artiste
+    public function getType(): string
+    {
+        return (new \ReflectionClass($this))->getShortName();
+    }
+
+    // Getters et Setters pour la relation Collaboration
+
+    public function getCollaborations(): Collection
+    {
+        return $this->collaborations;
+    }
+
+    public function addCollaboration(Collaboration $collaboration): self
+    {
+        if (!$this->collaborations->contains($collaboration)) {
+            $this->collaborations[] = $collaboration;
+            $collaboration->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCollaboration(Collaboration $collaboration): self
+    {
+        if ($this->collaborations->contains($collaboration)) {
+            $this->collaborations->removeElement($collaboration);
+            $collaboration->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    // Autres Getters et Setters...
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): self
+    {
+        $this->bio = $bio;
+        return $this;
+    }
+
+    public function getAge(): ?string
+    {
+        return $this->age;
+    }
+
+    public function setAge(?string $age): self
+    {
+        $this->age = $age;
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $city): self
+    {
+        $this->city = $city;
+        return $this;
     }
 
     public function getUser(): ?User
@@ -59,46 +149,30 @@ class Artist
         return $this;
     }
 
-    public function getBio(): ?string
-    {
-        return $this->bio;
-    }
-
-    public function setBio(string $bio): static
-    {
-        $this->bio = $bio;
-        return $this;
-    }
-
-    public function getAge(): ?string
-    {
-        return $this->age;
-    }
-
-    public function setAge(?string $age): static
-    {
-        $this->age = $age;
-        return $this;
-    }
-
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-
-    public function setCity(string $city): static
-    {
-        $this->city = $city;
-        return $this;
-    }
-
     public function getMusics(): Collection
     {
         return $this->musics;
     }
 
-    public function getFollowers(): Collection
+    public function addMusic(Music $music): self
     {
-        return $this->followers;
+        if (!$this->musics->contains($music)) {
+            $this->musics[] = $music;
+            $music->setArtist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMusic(Music $music): self
+    {
+        if ($this->musics->contains($music)) {
+            $this->musics->removeElement($music);
+            if ($music->getArtist() === $this) {
+                $music->setArtist(null);
+            }
+        }
+
+        return $this;
     }
 }

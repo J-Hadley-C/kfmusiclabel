@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UploaderController extends AbstractController
 {
-    #[Route('/', name: 'app_uploader')]
+    #[Route('/uploader', name: 'app_uploader')]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         $music = new Music();

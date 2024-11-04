@@ -3,17 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Artist;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -29,42 +30,57 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hashage du mot de passe
-            $user->setPassword(
-                $passwordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
+            // Création d'un nouvel artiste
+            $artist = new Artist();
+            $artist->setUser($user);
+            $artist->setName($form->get('nickname')->getData());
+            $user->setArtist($artist);
 
-            // Ajout des rôles choisis par l'utilisateur
+            // Gestion des rôles de l'utilisateur
             $roles = $form->get('roles')->getData();
+            if (!in_array('ROLE_ARTIST', $roles)) {
+                $roles[] = 'ROLE_ARTIST';
+            }
             $user->setRoles($roles);
 
-            // Génération d'un token de vérification unique
-            $user->setVerificationToken(Uuid::v4());
+            // Hashage du mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
+            $user->setPassword($hashedPassword);
 
-            // Enregistrement de l'utilisateur en base de données
-            $entityManager->persist($user);
-            $entityManager->flush();
+            // Génération du token de vérification
+            $verificationToken = bin2hex(random_bytes(32));
+            $user->setVerificationToken($verificationToken);
 
-            // Envoi de l'email de confirmation
-            $email = (new TemplatedEmail())
-                ->from('noreply@example.com')
-                ->to($user->getEmail())
-                ->subject('Confirmez votre adresse email')
-                ->htmlTemplate('registration/confirmation_email.html.twig')
-                ->context([
-                    'token' => $user->getVerificationToken(),
-                ]);
+            try {
+                $entityManager->persist($artist);
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            $mailer->send($email);
+                // Envoi de l'email de vérification
+                $verificationUrl = $this->generateUrl(
+                    'app_verify_email',
+                    ['token' => $verificationToken],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                );
 
-            // Notification de l'envoi de l'email de confirmation
-            $this->addFlash('success', 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.');
+                $email = (new TemplatedEmail())
+                    ->from('noreply@votresite.com')
+                    ->to($user->getEmail())
+                    ->subject('Vérifiez votre adresse email')
+                    ->htmlTemplate('security/verification_email.html.twig')
+                    ->context([
+                        'user' => $user, // Passe explicitement l'objet user
+                        'verificationUrl' => $verificationUrl
+                    ]);
 
-            // Redirection vers la page de connexion
-            return $this->redirectToRoute('app_login');
+                $mailer->send($email);
+
+                $this->addFlash('success', 'Un email de vérification a été envoyé. Veuillez vérifier votre boîte de réception.');
+
+                return $this->redirectToRoute('app_login');
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('error', 'Cet email est déjà utilisé. Veuillez en choisir un autre.');
+            }
         }
 
         return $this->render('registration/register.html.twig', [

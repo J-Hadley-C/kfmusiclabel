@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Collaboration{% endblock %}
+
+{% block body %}
+    <h1>{{ collaboration.title }}</h1>
+    <p><strong>Description:</strong> {{ collaboration.description }}</p>
+    <p><strong>Statut:</strong> {{ collaboration.status }}</p>
+    <p><strong>Initiateur:</strong> {% if collaboration.initiator %}{{ collaboration.initiator.name }}{% else %}Non spécifié{% endif %}</p>
+    <p><strong>Date de Création:</strong> {{ collaboration.createdAt|date('d/m/Y') }}</p>
+
+    <h2>Participants</h2>
+    <ul>
+        {% for participant in collaboration.participants %}
+            <li>{{ participant.name }}</li>
+        {% else %}
+            <li>Aucun participant</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('collaborations_list') }}">Retour à la liste des collaborations</a>
+{% endblock %}

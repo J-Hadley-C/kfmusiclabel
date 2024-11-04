@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\FollowRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Producteur;
 use App\Entity\Artist;
 
 #[ORM\Entity(repositoryClass: FollowRepository::class)]
@@ -16,23 +15,22 @@ class Follow
     #[ORM\Column]
     private ?int $id = null;
 
-    // Date à laquelle le suivi a été créé
+    // Date à laquelle le suivi a été créé, initialisée automatiquement
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?\DateTimeImmutable $createdAt;
 
     /**
-     * Producteur qui suit l'artiste
-     * @var Producteur
-     */
-    #[ORM\ManyToOne(targetEntity: Producteur::class, inversedBy: 'follows')]
-    private ?Producteur $prod = null;
-
-    /**
-     * Artiste qui est suivi par le producteur
-     * @var Artist
+     * Artiste qui est suivi
+     * Relation ManyToOne vers l'entité Artist
      */
     #[ORM\ManyToOne(targetEntity: Artist::class, inversedBy: 'followers')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable(); // Définit la date de création à la date actuelle
+    }
 
     // Getter pour obtenir l'identifiant du suivi
     public function getId(): ?int
@@ -46,39 +44,16 @@ class Follow
         return $this->createdAt;
     }
 
-    // Setter pour définir la date de création du suivi
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    // Getter pour obtenir le producteur qui suit l'artiste
-    public function getProd(): ?Producteur
-    {
-        return $this->prod;
-    }
-
-    // Setter pour définir le producteur qui suit l'artiste
-    public function setProd(?Producteur $prod): static
-    {
-        $this->prod = $prod;
-
-        return $this;
-    }
-
-    // Getter pour obtenir l'artiste qui est suivi par le producteur
+    // Getter pour obtenir l'artiste qui est suivi
     public function getArtist(): ?Artist
     {
         return $this->artist;
     }
 
-    // Setter pour définir l'artiste qui est suivi par le producteur
-    public function setArtist(?Artist $artist): static
+    // Setter pour définir l'artiste qui est suivi
+    public function setArtist(?Artist $artist): self
     {
         $this->artist = $artist;
-
         return $this;
     }
 }

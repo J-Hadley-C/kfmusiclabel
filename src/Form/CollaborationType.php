@@ -4,9 +4,10 @@ namespace App\Form;
 
 use App\Entity\Collaboration;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CollaborationType extends AbstractType
@@ -15,13 +16,21 @@ class CollaborationType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Titre de la Collaboration'
+                'label' => 'Title',
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description'
+                'label' => 'Description',
+                'required' => false,
             ])
-            ->add('status', TextType::class, [
-                'label' => 'Statut de la Collaboration'
+            ->add('status', ChoiceType::class, [
+                'choices' => [
+                    'Draft' => 'draft',
+                    'Pending' => 'pending',
+                    'Active' => 'active',
+                    'Completed' => 'completed',
+                    'Canceled' => 'canceled',
+                ],
+                'label' => 'Status',
             ]);
     }
 

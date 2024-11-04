@@ -1,34 +1,39 @@
-{% extends 'base.html.twig' %}
+{# templates/artist_dashboard/index.html.twig #}
 
-{% block title %}Dashboard Artiste{% endblock %}
+<h1>Tableau de bord de l'artiste</h1>
 
-{% block body %}
-<div class="artist-dashboard">
-    {% if isAdmin %}
-        <h1>Bienvenue sur le Dashboard Administrateur des Artistes</h1>
-        <p>En tant qu'administrateur, vous pouvez voir toutes les musiques créées par les artistes.</p>
+{% if isAdmin %}
+    <h2>Bienvenue sur le tableau de bord administrateur</h2>
+    <p>En tant qu'administrateur, vous avez accès à toutes les musiques et fonctionnalités des artistes.</p>
+{% else %}
+    {# Utilisez le champ `type` pour déterminer le type de l'artiste #}
+    {% if artist.type == 'beatmaker' %}
+        <h2>Bienvenue, Beatmaker !</h2>
+        <p>Vous avez accès aux outils spécifiques pour les beatmakers.</p>
+    {% elseif artist.type == 'producteur' %}
+        <h2>Bienvenue, Producteur !</h2>
+        <p>Voici vos outils spécifiques pour gérer vos productions musicales.</p>
+    {% elseif artist.type == 'musicien' %}
+        <h2>Bienvenue, Musicien !</h2>
+        <p>Accédez aux informations et fonctionnalités pour les musiciens.</p>
+    {% elseif artist.type == 'chanteur' %}
+        <h2>Bienvenue, Chanteur !</h2>
+        <p>Voici vos outils et ressources pour les chanteurs.</p>
     {% else %}
-        <h1>Bienvenue sur votre Dashboard, Artiste</h1>
-        <p>Vous pouvez voir ici toutes vos musiques.</p>
+        <h2>Bienvenue, Artiste !</h2>
+        <p>Bienvenue sur votre tableau de bord général pour les artistes.</p>
     {% endif %}
+{% endif %}
 
-    <h2>Liste des Musiques</h2>
-    <ul>
+<h2>Liste des Musiques</h2>
+<ul>
+    {% if musics|length > 0 %}
         {% for music in musics %}
             <li>
                 <strong>{{ music.title }}</strong> - {{ music.createdAt|date('d/m/Y') }}
-                <br>
-                <img src="{{ asset('uploads/' ~ music.cover) }}" alt="Cover de {{ music.title }}" width="100">
-                <br>
-                <a href="{{ music.link }}">Écouter</a>
             </li>
-        {% else %}
-            <li>Aucune musique trouvée.</li>
         {% endfor %}
-    </ul>
-
-    <h2>Collaborations</h2>
-    <p><a href="{{ path('collaborations_list') }}">Voir toutes les collaborations</a></p>
-    <p><a href="{{ path('collaborations_new') }}">Créer une nouvelle collaboration</a></p>
-</div>
-{% endblock %}
+    {% else %}
+        <li>Aucune musique trouvée.</li>
+    {% endif %}
+</ul>

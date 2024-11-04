@@ -1,0 +1,16 @@
+{# templates/collaboration/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une Nouvelle Collaboration{% endblock %}
+
+{% block body %}
+    <h1>Créer une Nouvelle Collaboration</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">Créer la collaboration</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('collaborations_list') }}">Retour à la liste des collaborations</a>
+
+{% endblock %}

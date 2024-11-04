@@ -1,55 +1,58 @@
+# config/packages/security.yaml
+
 security:
-    # Configuration pour le hashage de mot de passe
+    # Configurer le hashage des mots de passe pour la sécurité
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
-    # Configuration des fournisseurs d'utilisateurs
+    # Fournisseur d'utilisateurs : utilise l'entité User pour l'authentification
     providers:
-        # Utilisé pour recharger l'utilisateur à partir de la session
         app_user_provider:
             entity:
-                class: App\Entity\User
-                property: email
+                class: App\Entity\User  # L'entité utilisée pour la connexion
+                property: email          # Le champ utilisé pour identifier l'utilisateur (email)
 
+    # Configuration des firewalls pour gérer la sécurité sur différentes parties du site
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+            security: false  # Désactivation de la sécurité pour le développement
 
         main:
             lazy: true
-            provider: app_user_provider
-            custom_authenticator: App\Security\LoginFormAuth
-            entry_point: App\Security\LoginFormAuth
+            provider: app_user_provider  # Utilise le fournisseur d'utilisateurs défini plus haut
+            custom_authenticator: App\Security\LoginFormAuth  # Définit l'authentificateur personnalisé
+            entry_point: App\Security\LoginFormAuth  # Point d'entrée de l'authentification
             form_login:
-                login_path: app_login
-                check_path: app_login
+                login_path: app_login  # Chemin vers la page de connexion
+                check_path: app_login  # Chemin pour vérifier les informations de connexion
             logout:
-                path: app_logout
-                target: /home
+                path: app_logout  # Chemin de déconnexion
+                target: /home     # Redirection après déconnexion
 
             remember_me:
-                secret: '%kernel.secret%'
-                lifetime: 604800
-                path: /
+                secret: '%kernel.secret%'  # Clé de sécurité pour le "remember me"
+                lifetime: 604800  # Durée de vie en secondes (1 semaine)
+                path: /           # Chemin pour le "remember me"
 
-    # Contrôles d'accès par rôle
+    # Contrôles d'accès : chaque chemin est protégé par un rôle spécifique
     access_control:
-        # Accès spécifique pour chaque rôle
+        # Seuls les administrateurs peuvent accéder aux pages commençant par /admin
         - { path: ^/admin, roles: ROLE_ADMIN }
+        
+        # Accès pour le tableau de bord des artistes, accessible uniquement par les artistes
         - { path: ^/artist/dashboard, roles: ROLE_ARTIST }
-        - { path: ^/producteur/dashboard, roles: ROLE_PRODUCTEUR }
-        - { path: ^/beatmaker/dashboard, roles: ROLE_BEATMAKER }
-        - { path: ^/musicien/dashboard, roles: ROLE_MUSICIEN }
-        - { path: ^/collaborations, roles: IS_AUTHENTICATED_FULLY }
-        # Accès aux collaborations pour tous les rôles
-        - { path: ^/collaborations, roles: [ROLE_ARTIST, ROLE_PRODUCTEUR, ROLE_BEATMAKER, ROLE_MUSICIEN, ROLE_ADMIN] }
+        
+        # Accès aux collaborations pour tous les artistes
+        - { path: ^/collaborations, roles: ROLE_ARTIST }
+        
+        # Accès aux profils pour tous les utilisateurs connectés
+        - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
     security:
         password_hashers:
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: auto
-                cost: 4
-                time_cost: 3
-                memory_cost: 10
+                cost: 4 # Réduit pour les tests
+                time_cost: 3 # Argon2

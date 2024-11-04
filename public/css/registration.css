@@ -1,0 +1,91 @@
+/* public/css/registration.css */
+
+/* Conteneur principal du formulaire */
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-image: url('/images/'); /* Chemin de votre image de fond */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(255, 255, 255, 0.8); /* Légère transparence */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Alternative à `backdrop-filter: blur(5px);` pour Safari */
+    filter: opacity(0.95); /* Ajout de transparence pour un effet similaire sur Safari */
+}
+
+/* Titre du formulaire */
+.form-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+/* Style des champs de formulaire */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+/* Focus sur les champs de formulaire */
+.form-input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Bouton de soumission */
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+/* Messages d'erreur */
+.form-error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* Messages d'alerte */
+.alert.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+/* Masque les messages d'erreur au chargement */
+.form-error {
+    display: none;
+}
+
+/* Affiche les erreurs après la soumission du formulaire */
+.was-validated .form-error {
+    display: block;
+}

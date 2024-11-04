@@ -2,40 +2,47 @@
 
 namespace App\Controller;
 
+use App\Repository\ArtistRepository;
 use App\Repository\CollaborationRepository;
-use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminDashboardController extends AbstractController
 {
-    /**
-     * Affiche le tableau de bord pour l'administrateur avec une vue des utilisateurs et collaborations.
-     *
-     * @param UserRepository $userRepository Injecte le repository pour les utilisateurs
-     * @param CollaborationRepository $collaborationRepository Injecte le repository pour les collaborations
-     * @return Response La vue du tableau de bord de l'administrateur
-     */
     #[Route('/admin/dashboard', name: 'admin_dashboard')]
-    public function index(UserRepository $userRepository, CollaborationRepository $collaborationRepository): Response
+    public function index(ArtistRepository $artistRepository, CollaborationRepository $collaborationRepository): Response
     {
-        // Récupère les utilisateurs par rôle pour les afficher séparément
-        $artists = $userRepository->findByRole('ROLE_ARTIST'); // Liste des artistes
-        $producers = $userRepository->findByRole('ROLE_PRODUCTEUR'); // Liste des producteurs
-        $beatmakers = $userRepository->findByRole('ROLE_BEATMAKER'); // Liste des beatmakers
-        $musicians = $userRepository->findByRole('ROLE_MUSICIAN'); // Liste des musiciens
+        // Récupère tous les artistes de la base de données
+        $artists = $artistRepository->findAll();
 
-        // Récupère toutes les collaborations pour affichage, sans contrôle d'édition
+        // Récupère toutes les collaborations de la base de données
         $collaborations = $collaborationRepository->findAll();
 
-        // Retourne le template du tableau de bord d'administration
+        // Définit les rôles spécifiques des sous-entités d'artistes
+        $roles = [
+            'ROLE_PRODUCTEUR' => 'producers',    // Producteurs
+            'ROLE_BEATMAKER' => 'beatmakers',    // Beatmakers
+            'ROLE_CHANTEUR' => 'singers',        // Chanteurs
+            'ROLE_MUSICIAN' => 'musicians'       // Musiciens
+        ];
+
+        // Tableau pour stocker les artistes filtrés par sous-entité
+        $filteredArtists = [];
+
+        // Filtre les artistes selon leur rôle
+        foreach ($roles as $role => $key) {
+            $filteredArtists[$key] = array_filter($artists, fn($artist) => in_array($role, $artist->getUser()->getRoles()));
+        }
+
+        // Rend la vue du tableau de bord administrateur
         return $this->render('admin_dashboard/index.html.twig', [
             'artists' => $artists,
-            'producers' => $producers,
-            'beatmakers' => $beatmakers,
-            'musicians' => $musicians,
-            'collaborations' => $collaborations,
+            'producers' => $filteredArtists['producers'], // Producteurs
+            'beatmakers' => $filteredArtists['beatmakers'], // Beatmakers
+            'singers' => $filteredArtists['singers'], // Chanteurs
+            'musicians' => $filteredArtists['musicians'], // Musiciens
+            'collaborations' => $collaborations, // Collaborations
         ]);
     }
 }

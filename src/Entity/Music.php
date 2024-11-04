@@ -39,13 +39,6 @@ class Music
     private ?Artist $artist = null;
 
     /**
-     * Beatmaker qui a produit la musique
-     * @var Beatmaker
-     */
-    #[ORM\ManyToOne(targetEntity: Beatmaker::class, inversedBy: 'producedMusics')]
-    private ?Beatmaker $beatmaker = null;
-
-    /**
      * Collection des styles associés à la musique
      * @var Collection<int, Style>
      */
@@ -117,20 +110,6 @@ class Music
     public function setArtist(?Artist $artist): static
     {
         $this->artist = $artist;
-
-        return $this;
-    }
-
-    // Getter pour obtenir le beatmaker associé à la musique
-    public function getBeatmaker(): ?Beatmaker
-    {
-        return $this->beatmaker;
-    }
-
-    // Setter pour définir le beatmaker associé à la musique
-    public function setBeatmaker(?Beatmaker $beatmaker): static
-    {
-        $this->beatmaker = $beatmaker;
 
         return $this;
     }

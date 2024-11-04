@@ -3,21 +3,36 @@
 {% block title %}Liste des Collaborations{% endblock %}
 
 {% block body %}
-<h1>Liste des Collaborations</h1>
+    <h1>Liste des Collaborations</h1>
 
-{% if collaborations is not empty %}
-    <ul>
-        {% for collaboration in collaborations %}
-            <li>
-                <strong>{{ collaboration.title }}</strong> - Statut : {{ collaboration.status }}
-                <p>Description : {{ collaboration.description }}</p>
-                <p>Initiée par : {{ collaboration.initiatedAt.nickname }}</p>
-                <p>Date de création : {{ collaboration.createdAt|date('d/m/Y') }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Aucune collaboration trouvée.</p>
-{% endif %}
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Statut</th>
+                <th>Initiateur</th>
+                <th>Date de Création</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for collaboration in collaborations %}
+                <tr>
+                    <td>{{ collaboration.title }}</td>
+                    <td>{{ collaboration.status }}</td>
+                    <td>{% if collaboration.initiator %}{{ collaboration.initiator.name }}{% else %}Non spécifié{% endif %}</td>
+                    <td>{{ collaboration.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        <a href="{{ path('collaboration_detail', { id: collaboration.id }) }}">Voir les détails</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucune collaboration trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
+    <a href="{{ path('collaborations_new') }}" class="btn btn-primary">Créer une Nouvelle Collaboration</a>
 {% endblock %}

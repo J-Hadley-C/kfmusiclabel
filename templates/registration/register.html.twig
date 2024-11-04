@@ -1,28 +1,92 @@
+{# templates/registration/register.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Inscription{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/registration.css') }}">
+{% endblock %}
+
 {% block body %}
 <div class="form-container">
-    <h1>Créer un compte</h1>
-    <form method="post" action="{{ path('app_register') }}" enctype="multipart/form-data">
-        {{ form_start(registrationForm) }}
-        
-        {{ form_row(registrationForm.email, {'attr': {'placeholder': 'Email'}}) }}
-        {{ form_row(registrationForm.nickname, {'attr': {'placeholder': 'Pseudonyme'}}) }}
-        {{ form_row(registrationForm.phone, {'attr': {'placeholder': 'Téléphone'}}) }}
-        {{ form_row(registrationForm.password.first, {'attr': {'placeholder': 'Mot de passe'}}) }}
-        {{ form_row(registrationForm.password.second, {'attr': {'placeholder': 'Confirmer le mot de passe'}}) }}
+    <h1>Inscription</h1>
 
-        <!-- Ajout de la classe pour styliser le champ de fichier -->
-        <div class="form-file">
-            {{ form_row(registrationForm.photo) }}
+    {# Affiche les messages flash uniquement si un message est présent, et seulement après soumission #}
+    <div class="flash-messages">
+        {% for label, messages in app.flashes %}
+            <div class="alert alert-{{ label }}">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {{ form_start(registrationForm, { 'attr': { 'id': 'registrationForm' } }) }}
+
+    <div class="form-group">
+        {{ form_label(registrationForm.email) }}
+        {{ form_widget(registrationForm.email, { 'attr': {'class': 'form-input', 'placeholder': 'Entrez votre email'} }) }}
+        <div class="form-error" style="display: none;">
+            {{ form_errors(registrationForm.email) }}
         </div>
+    </div>
 
-        <button type="submit" class="btn">S'inscrire</button>
-        
-        {{ form_end(registrationForm) }}
-    </form>
-    <p>Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+    <div class="form-group">
+        {{ form_label(registrationForm.nickname) }}
+        {{ form_widget(registrationForm.nickname, { 'attr': {'class': 'form-input', 'placeholder': 'Choisissez un pseudonyme'} }) }}
+        <div class="form-error" style="display: none;">
+            {{ form_errors(registrationForm.nickname) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(registrationForm.phone) }}
+        {{ form_widget(registrationForm.phone, { 'attr': {'class': 'form-input', 'placeholder': 'Numéro de téléphone (optionnel)'} }) }}
+        <div class="form-error" style="display: none;">
+            {{ form_errors(registrationForm.phone) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(registrationForm.plainPassword.first) }}
+        {{ form_widget(registrationForm.plainPassword.first, { 'attr': {'class': 'form-input', 'placeholder': 'Créez un mot de passe'} }) }}
+        <div class="form-error" style="display: none;">
+            {{ form_errors(registrationForm.plainPassword.first) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(registrationForm.plainPassword.second) }}
+        {{ form_widget(registrationForm.plainPassword.second, { 'attr': {'class': 'form-input', 'placeholder': 'Confirmez le mot de passe'} }) }}
+        <div class="form-error" style="display: none;">
+            {{ form_errors(registrationForm.plainPassword.second) }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn-submit">S'inscrire</button>
+
+    {{ form_end(registrationForm) }}
 </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('registrationForm');
+
+        form.addEventListener('submit', function (event) {
+            // Affiche les erreurs si le formulaire est soumis et n'est pas valide
+            form.classList.add('was-validated');
+
+            // Affiche les messages d'erreur en cas de validation échouée
+            const errors = form.querySelectorAll('.form-error');
+            errors.forEach(error => {
+                if (error.innerHTML.trim() !== '') {
+                    error.style.display = 'block';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
