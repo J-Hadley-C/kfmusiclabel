@@ -4,10 +4,6 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\BeatmakerRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Entity\Music;
 
 #[ORM\Entity(repositoryClass: BeatmakerRepository::class)]
 class Beatmaker
