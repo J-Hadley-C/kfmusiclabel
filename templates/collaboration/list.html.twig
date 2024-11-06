@@ -16,21 +16,29 @@
             </tr>
         </thead>
         <tbody>
-            {% for collaboration in collaborations %}
-                <tr>
-                    <td>{{ collaboration.title }}</td>
-                    <td>{{ collaboration.status }}</td>
-                    <td>{% if collaboration.initiator %}{{ collaboration.initiator.name }}{% else %}Non spécifié{% endif %}</td>
-                    <td>{{ collaboration.createdAt|date('d/m/Y') }}</td>
-                    <td>
-                        <a href="{{ path('collaboration_detail', { id: collaboration.id }) }}">Voir les détails</a>
-                    </td>
-                </tr>
+            {% if collaborations is not empty %}
+                {% for collaboration in collaborations %}
+                    <tr>
+                        <td>{{ collaboration.title }}</td>
+                        <td>{{ collaboration.status }}</td>
+                        <td>
+                            {% if collaboration.initiator %}
+                                {{ collaboration.initiator.name }}
+                            {% else %}
+                                Non spécifié
+                            {% endif %}
+                        </td>
+                        <td>{{ collaboration.createdAt|date('d/m/Y') }}</td>
+                        <td>
+                            <a href="{{ path('collaboration_detail', { id: collaboration.id }) }}">Voir les détails</a>
+                        </td>
+                    </tr>
+                {% endfor %}
             {% else %}
                 <tr>
                     <td colspan="5">Aucune collaboration trouvée.</td>
                 </tr>
-            {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 

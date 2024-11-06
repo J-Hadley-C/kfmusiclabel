@@ -1,12 +1,21 @@
 {# templates/artist_dashboard/index.html.twig #}
 
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord de l'artiste{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/artist_dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
 <h1>Tableau de bord de l'artiste</h1>
 
 {% if isAdmin %}
     <h2>Bienvenue sur le tableau de bord administrateur</h2>
     <p>En tant qu'administrateur, vous avez accès à toutes les musiques et fonctionnalités des artistes.</p>
 {% else %}
-    {# Utilisez le champ `type` pour déterminer le type de l'artiste #}
     {% if artist.type == 'beatmaker' %}
         <h2>Bienvenue, Beatmaker !</h2>
         <p>Vous avez accès aux outils spécifiques pour les beatmakers.</p>
@@ -31,9 +40,50 @@
         {% for music in musics %}
             <li>
                 <strong>{{ music.title }}</strong> - {{ music.createdAt|date('d/m/Y') }}
+                <a href="{{ path('music_play', { id: music.id }) }}">Écouter</a> |
+                <a href="{{ path('music_delete', { id: music.id }) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette musique ?');">Supprimer</a>
             </li>
         {% endfor %}
     {% else %}
         <li>Aucune musique trouvée.</li>
     {% endif %}
 </ul>
+
+<h2>Uploader une Nouvelle Musique</h2>
+{% if musics|length < 3 %}
+    <form action="{{ path('music_upload') }}" class="dropzone" id="file-upload">
+        <div class="dz-message">Déposez votre fichier audio ici ou cliquez pour sélectionner.</div>
+    </form>
+    <form action="{{ path('cover_upload') }}" class="dropzone" id="cover-upload">
+        <div class="dz-message">Déposez votre image de couverture ici ou cliquez pour sélectionner.</div>
+    </form>
+{% else %}
+    <p>Vous avez atteint la limite d'upload de 3 fichiers. Supprimez une musique pour en ajouter une nouvelle.</p>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <script>
+        Dropzone.options.fileUpload = {
+            url: "{{ path('music_upload') }}",
+            acceptedFiles: '.mp3,.wav',
+            maxFiles: 1,
+            dictDefaultMessage: "Déposez votre fichier audio ici ou cliquez pour sélectionner",
+            success: function (file, response) {
+                location.reload();
+            }
+        };
+
+        Dropzone.options.coverUpload = {
+            url: "{{ path('cover_upload') }}",
+            acceptedFiles: '.jpg,.jpeg,.png',
+            maxFiles: 1,
+            dictDefaultMessage: "Déposez votre image de couverture ici ou cliquez pour sélectionner",
+            success: function (file, response) {
+                location.reload();
+            }
+        };
+    </script>
+{% endblock %}

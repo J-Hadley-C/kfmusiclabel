@@ -161,4 +161,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Suppression des informations sensibles ici si nécessaire
     }
+        // Ajoute une nouvelle colonne `resetToken` pour stocker le token de réinitialisation
+        #[ORM\Column(type: 'string', length: 64, nullable: true)]
+        private ?string $resetToken = null;
+    
+        /**
+         * Définit le token de réinitialisation de mot de passe
+         *
+         * @param string|null $resetToken - Token de réinitialisation généré pour l'utilisateur
+         * @return self - Retourne l'instance actuelle de l'entité User pour permettre l'enchaînement de méthodes
+         */
+        public function setResetToken(?string $resetToken): self
+        {
+            $this->resetToken = $resetToken;
+            return $this;
+        }
+    
+        /**
+         * Récupère le token de réinitialisation de mot de passe
+         *
+         * @return string|null - Retourne le token de réinitialisation ou null si aucun n'est défini
+         */
+        public function getResetToken(): ?string
+        {
+            return $this->resetToken;
+        }
 }

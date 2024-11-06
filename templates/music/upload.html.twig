@@ -1,0 +1,31 @@
+{# Ce fichier music/upload.html.twig sert à afficher le formulaire d'upload de la musique et de la couverture. #}
+{# Il est inclus dans le fichier artist_dashboard/index.html.twig. #}
+{# Le formulaire est affiché si la variable uploadForm est définie. #}
+{# Sinon, un message indique que le formulaire n'est pas disponible. #}
+{# Le formulaire est généré avec la méthode form_start() et form_end() de Symfony. #}
+{# Les champs du formulaire sont affichés avec les méthodes form_label() et form_widget(). #}
+{# Le bouton de soumission est ajouté avec la méthode form_end(). #}
+
+
+
+<h1>Upload de Musique</h1>
+
+{% if uploadForm is defined %}
+    {{ form_start(uploadForm) }}
+        <div class="form-group">
+            {{ form_label(uploadForm.title, 'Titre de la musique') }}
+            {{ form_widget(uploadForm.title) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(uploadForm.link, 'Fichier Audio') }}
+            {{ form_widget(uploadForm.link) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(uploadForm.cover, 'Image de Couverture') }}
+            {{ form_widget(uploadForm.cover) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Uploader</button>
+    {{ form_end(uploadForm) }}
+{% else %}
+    <p>Le formulaire d'upload n'est pas disponible.</p>
+{% endif %}

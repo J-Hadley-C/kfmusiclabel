@@ -5,6 +5,9 @@
     <title>{% block title %}Welcome!{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css">
+
 
     <!-- Liens vers les fichiers CSS principaux et spécifiques -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -13,7 +16,7 @@
     <link rel="stylesheet" href="{{ asset('css/form.css') }}">
     <link rel="stylesheet" href="{{ asset('css/discover.css') }}">
     <link rel="stylesheet" href="{{ asset('css/navigation.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/musicien.css') }}">
+    {# <link rel="stylesheet" href="{{ asset('css/musicien.css') }}"> #}
     <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/upload_music.css') }}">
 

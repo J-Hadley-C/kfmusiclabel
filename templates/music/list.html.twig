@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Musiques{% endblock %}
+
+{% block body %}
+    <h1>Liste des Musiques</h1>
+
+    <ul>
+        {% for music in musics %}
+            <li>
+                <strong>{{ music.title }}</strong> - {{ music.createdAt|date('d/m/Y') }}
+                <a href="{{ path('music_upload_ok', { id: music.id }) }}">Voir les détails</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        {{ knp_pagination_render(musics) }}
+    </div>
+{% endblock %}

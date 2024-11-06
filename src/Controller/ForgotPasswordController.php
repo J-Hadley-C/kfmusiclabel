@@ -12,9 +12,9 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-
 class ForgotPasswordController extends AbstractController
 {
+    // Route pour demander la réinitialisation du mot de passe
     #[Route('/reset-password', name: 'app_forgot_password_request')]
     public function requestResetPassword(Request $request, MailerInterface $mailer, EntityManagerInterface $entityManager): Response
     {
@@ -26,7 +26,6 @@ class ForgotPasswordController extends AbstractController
                 $user->setResetToken(bin2hex(random_bytes(32)));
                 $entityManager->flush();
 
-                // Générer l'URL de réinitialisation en utilisant la bonne route `app_reset_password`
                 $resetUrl = $this->generateUrl(
                     'app_reset_password',
                     ['token' => $user->getResetToken()],
@@ -37,11 +36,13 @@ class ForgotPasswordController extends AbstractController
                     ->from('noreply@votresite.com')
                     ->to($user->getEmail())
                     ->subject('Réinitialisez votre mot de passe')
-                    ->htmlTemplate('emails/reset_password_email.html.twig')
+                    ->htmlTemplate('security/emails/reset_password_email.html.twig')
                     ->context(['resetUrl' => $resetUrl]);
 
                 $mailer->send($resetEmail);
-                $this->addFlash('success', 'Un email de réinitialisation a été envoyé.');
+
+                // Ajoute le message flash pour informer l'utilisateur
+                $this->addFlash('info', 'Un email de réinitialisation a été envoyé. Veuillez vérifier votre boîte mail et cliquer sur le lien pour réinitialiser votre mot de passe.');
             } else {
                 $this->addFlash('error', 'Aucun utilisateur trouvé avec cet email.');
             }
@@ -50,6 +51,7 @@ class ForgotPasswordController extends AbstractController
         return $this->render('security/request_reset_password.html.twig');
     }
 
+    // Route pour la réinitialisation du mot de passe à partir du lien envoyé par email
     #[Route('/reset-password/{token}', name: 'app_reset_password')]
     public function resetPassword(Request $request, string $token, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
@@ -61,6 +63,13 @@ class ForgotPasswordController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $newPassword = $request->request->get('password');
+
+            // Vérification de la longueur du mot de passe
+            if (strlen($newPassword) < 8) {
+                $this->addFlash('error', 'Le mot de passe doit contenir au moins 8 caractères.');
+                return $this->redirectToRoute('app_reset_password', ['token' => $token]);
+            }
+
             $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
             $user->setResetToken(null);
             $entityManager->flush();
